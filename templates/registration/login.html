@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrée — Bibliothèque des Lumières</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root{--parchemin:#f5ede0;--parchemin2:#ede0cc;--parchemin3:#e2d0b8;--encre:#1a1208;--encre2:#2e200e;--brun:#5c3d1e;--brun2:#7a5230;--or:#8b6914;--or2:#b8942a;--or3:#d4ac45;--rouge:#7a1a1a;--ivoire:#faf4e8;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Crimson Pro',Georgia,serif;background:var(--encre);min-height:100vh;display:flex;align-items:center;justify-content:center;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect width='60' height='60' fill='none'/%3E%3Cpath d='M0 30 L60 30 M30 0 L30 60' stroke='rgba(184,148,42,0.05)' stroke-width='1'/%3E%3C/svg%3E");}
+
+.portail{
+  background:var(--parchemin);
+  width:420px;
+  max-width:95vw;
+  padding:0;
+  box-shadow:0 8px 48px rgba(0,0,0,0.7);
+  border:1px solid rgba(184,148,42,0.3);
+  position:relative;
+}
+
+.portail-haut{
+  background:var(--encre2);
+  text-align:center;
+  padding:2.5rem 2rem 1.8rem;
+  border-bottom:2px solid var(--or2);
+}
+
+.portail-symbole{font-size:2.2rem;color:var(--or3);margin-bottom:.7rem;display:block;}
+.portail-titre{font-family:'IM Fell English',serif;font-size:1.6rem;color:var(--or3);letter-spacing:.04em;}
+.portail-sous{font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(212,172,69,.5);font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;margin-top:6px;}
+
+.portail-corps{padding:2rem 2.2rem 2.5rem;}
+
+.ornement-sep{text-align:center;color:var(--or2);font-size:.9rem;letter-spacing:.2em;margin:1rem 0;opacity:.6;}
+
+.form-champ{display:flex;flex-direction:column;gap:5px;margin-bottom:1.2rem;}
+
+label{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.8rem;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--brun2);
+}
+
+.form-input{
+  background:var(--ivoire);
+  border:none;
+  border-bottom:2px solid var(--parchemin3);
+  color:var(--encre);
+  padding:10px 12px;
+  font-family:'Crimson Pro',serif;
+  font-size:1.05rem;
+  width:100%;
+  outline:none;
+  transition:border-color .2s;
+}
+.form-input:focus{border-bottom-color:var(--or2);background:var(--parchemin);}
+
+.btn-entrer{
+  width:100%;
+  background:var(--brun);
+  border:1px solid var(--or2);
+  color:var(--parchemin);
+  padding:12px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  cursor:pointer;
+  margin-top:.5rem;
+  transition:all .2s;
+}
+.btn-entrer:hover{background:var(--encre2);color:var(--or3);}
+
+.erreur-msg{
+  background:rgba(122,26,26,.08);
+  border-left:3px solid var(--rouge);
+  color:var(--rouge);
+  font-style:italic;
+  padding:8px 12px;
+  font-size:.95rem;
+  margin-bottom:1rem;
+}
+
+.inscription-lien{
+  text-align:center;
+  margin-top:1.2rem;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:.9rem;
+  color:var(--brun2);
+}
+.inscription-lien a{color:var(--or);text-decoration:none;}
+.inscription-lien a:hover{text-decoration:underline;}
+
+.coin{position:absolute;width:16px;height:16px;border-color:var(--or2);border-style:solid;}
+.coin-tg{top:8px;left:8px;border-width:1px 0 0 1px;}
+.coin-td{top:8px;right:8px;border-width:1px 1px 0 0;}
+.coin-bg{bottom:8px;left:8px;border-width:0 0 1px 1px;}
+.coin-bd{bottom:8px;right:8px;border-width:0 1px 1px 0;}
+</style>
+</head>
+<body>
+<div class="portail">
+  <div class="coin coin-tg"></div>
+  <div class="coin coin-td"></div>
+  <div class="coin coin-bg"></div>
+  <div class="coin coin-bd"></div>
+
+  <div class="portail-haut">
+    <span class="portail-symbole">📚</span>
+    <div class="portail-titre">Bibliothèque des Lumières</div>
+    <div class="portail-sous">— Accès réservé aux membres —</div>
+  </div>
+
+  <div class="portail-corps">
+    <div class="ornement-sep">✦ &ensp; Veuillez vous identifier &ensp; ✦</div>
+
+    {% if form.errors %}
+    <div class="erreur-msg">Identifiants incorrects. Veuillez réessayer.</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-champ">
+        <label for="id_username">Nom d'utilisateur</label>
+        <input type="text" name="username" id="id_username" class="form-input" autofocus placeholder="Votre identifiant">
+      </div>
+      <div class="form-champ">
+        <label for="id_password">Mot de passe</label>
+        <input type="password" name="password" id="id_password" class="form-input" placeholder="••••••••">
+      </div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit" class="btn-entrer">↳ Entrer dans la Bibliothèque</button>
+    </form>
+
+    <div class="inscription-lien">
+      <p style="margin-top:1rem;color:#999;font-size:.82rem">Comptes de démonstration :</p>
+      <p style="font-size:.82rem;color:var(--brun2)">Admin : <strong>admin</strong> / <strong>admin123</strong></p>
+      <p style="font-size:.82rem;color:var(--brun2)">Lecteur : <strong>lecteur</strong> / <strong>lecteur123</strong></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

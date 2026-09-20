@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Gérer la commande #{{ commande.id }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">📋 Commande <span>#{{ commande.id }}</span></h1>
+  <a href="{% url 'admin_commandes' %}" class="btn btn-outline">← Retour</a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+
+  <!-- Infos commande -->
+  <div style="background:white;border:1px solid var(--parchemin3);border-radius:var(--radius);padding:2rem;box-shadow:var(--ombre)">
+    <h3 style="font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.12em;color:var(--or);margin-bottom:1.5rem">DÉTAILS DE LA DEMANDE</h3>
+
+    <div style="display:flex;gap:1rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--parchemin2)">
+      {% if commande.livre.image %}
+      <img src="{{ commande.livre.image.url }}" style="width:70px;height:95px;object-fit:cover;border-radius:var(--radius);box-shadow:var(--ombre)">
+      {% else %}
+      <div style="width:70px;height:95px;background:var(--parchemin2);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:2rem">📗</div>
+      {% endif %}
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-style:italic">{{ commande.livre.titre }}</div>
+        <div style="color:var(--or);font-style:italic;font-size:.9rem;margin-top:3px">{{ commande.livre.auteur }}</div>
+        <span class="badge badge-{{ commande.livre.statut }}" style="margin-top:8px">{{ commande.livre.get_statut_display_fr }}</span>
+      </div>
+    </div>
+
+    {% for label,val in rows %}
+    <div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--parchemin2)">
+      <span style="font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.08em;color:var(--encre3)">{{ label }}</span>
+      <span style="font-size:.9rem;color:var(--encre2)">{{ val }}</span>
+    </div>
+    {% endfor %}
+
+    {% if commande.note_client %}
+    <div style="margin-top:1rem;background:var(--parchemin);padding:1rem;border-radius:var(--radius);border-left:3px solid var(--or2)">
+      <div style="font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;color:var(--encre3);margin-bottom:.5rem">MESSAGE DU LECTEUR</div>
+      <p style="font-style:italic;font-size:.9rem;color:var(--encre2)">{{ commande.note_client }}</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Formulaire admin -->
+  <div style="background:white;border:1px solid var(--parchemin3);border-top:3px solid var(--or2);border-radius:var(--radius);padding:2rem;box-shadow:var(--ombre)">
+    <h3 style="font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.12em;color:var(--or);margin-bottom:1.5rem">TRAITEMENT DE LA DEMANDE</h3>
+    <form method="post">
+      {% csrf_token %}
+      <div style="display:flex;flex-direction:column;gap:1.2rem">
+        <div class="form-group">
+          <label>{{ form.statut.label }}</label>{{ form.statut }}
+        </div>
+        <div class="form-group">
+          <label>{{ form.date_retour_prevu.label }}</label>{{ form.date_retour_prevu }}
+        </div>
+        <div class="form-group">
+          <label>{{ form.note_admin.label }}</label>{{ form.note_admin }}
+        </div>
+        <button type="submit" class="btn btn-or" style="margin-top:.5rem">⚜ Mettre à jour</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

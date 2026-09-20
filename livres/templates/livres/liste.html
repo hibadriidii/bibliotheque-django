@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Catalogue — Bibliothèque des Lumières{% endblock %}
+{% block content %}
+
+<div class="page-entete">
+  <p class="ornement">✦ &ensp; ✦ &ensp; ✦</p>
+  <h1 class="page-titre">Catalogue des Ouvrages</h1>
+  <p class="page-sous-titre">Répertoire complet des volumes de notre collection</p>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">{{ stats.total }}</div>
+    <div class="stat-lab">Volumes au catalogue</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" style="color:#2d4a2d">{{ stats.disponibles }}</div>
+    <div class="stat-lab">Disponibles à l'emprunt</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" style="color:#7a1a1a">{{ stats.empruntes }}</div>
+    <div class="stat-lab">Actuellement empruntés</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" style="color:#8b6914">{{ stats.reserves }}</div>
+    <div class="stat-lab">Réservés</div>
+  </div>
+</div>
+
+<div class="actions-rangee">
+  <h2 style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--brun2);font-size:1rem">
+    {{ livres|length }} ouvrage{% if livres|length != 1 %}s{% endif %} trouvé{% if livres|length != 1 %}s{% endif %}
+  </h2>
+  {% if user.is_staff %}
+  <a href="{% url 'ajouter_livre' %}" class="btn btn-principal">⊕ Enregistrer un ouvrage</a>
+  {% endif %}
+</div>
+
+<form method="get" class="recherche">
+  <input type="text" name="q" value="{{ query }}" placeholder="🔍  Rechercher un titre, un auteur, un ID…">
+  <select name="categorie">
+    <option value="">— Toutes les catégories —</option>
+    {% for val, label in categories %}
+    <option value="{{ val }}" {% if categorie_filtre == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <select name="statut">
+    <option value="">— Tous les statuts —</option>
+    <option value="disponible" {% if statut_filtre == 'disponible' %}selected{% endif %}>Disponible</option>
+    <option value="emprunte" {% if statut_filtre == 'emprunte' %}selected{% endif %}>Emprunté</option>
+    <option value="reserve" {% if statut_filtre == 'reserve' %}selected{% endif %}>Réservé</option>
+  </select>
+  <button type="submit" class="btn btn-or">Chercher</button>
+  {% if query or categorie_filtre or statut_filtre %}
+  <a href="{% url 'liste_livres' %}" class="btn btn-contour">Effacer</a>
+  {% endif %}
+</form>
+
+{% if livres %}
+<div class="tableau-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Titre de l'ouvrage</th>
+        <th>Auteur</th>
+        <th>Catégorie</th>
+        <th>Année</th>
+        <th>Qté</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for livre in livres %}
+      <tr>
+        <td style="color:var(--brun2);font-size:.82rem;font-style:italic">{{ livre.id }}</td>
+        <td><strong style="font-family:'Cormorant Garamond',serif;font-size:1.02rem">{{ livre.titre }}</strong></td>
+        <td style="font-style:italic;color:var(--brun2)">{{ livre.auteur }}</td>
+        <td><span style="font-size:.85rem;color:var(--brun2)">{{ livre.categorie }}</span></td>
+        <td>{{ livre.annee_publication }}</td>
+        <td style="text-align:center;font-family:'IM Fell English',serif">{{ livre.quantite_disponible }}</td>
+        <td>
+          <span class="badge badge-{{ livre.statut }}">{{ livre.get_statut_display_fr }}</span>
+        </td>
+        <td>
+          <div style="display:flex;gap:6px">
+            <a href="{% url 'detail_livre' livre.pk %}" class="btn btn-or btn-sm">Lire</a>
+            {% if user.is_staff %}
+            <a href="{% url 'modifier_livre' livre.pk %}" class="btn btn-contour btn-sm">Éditer</a>
+            <a href="{% url 'supprimer_livre' livre.pk %}" class="btn btn-danger btn-sm">✕</a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="tableau-wrap">
+  <div class="vide">
+    <div class="vide-icone">📭</div>
+    <h3>Aucun ouvrage répertorié</h3>
+    <p>{% if query %}Aucun résultat pour « {{ query }} »{% else %}Le catalogue est vide pour l'instant{% endif %}</p>
+    {% if user.is_staff %}
+    <a href="{% url 'ajouter_livre' %}" class="btn btn-principal" style="margin-top:1.5rem">⊕ Enregistrer le premier ouvrage</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

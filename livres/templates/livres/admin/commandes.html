@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Commandes — Administration{% endblock %}
+{% block content %}
+
+<div class="stats-grid">
+  {% for s,label in statuts %}
+  <div class="stat-card" style="border-top-color:{% if s == 'en_attente' %}var(--or2){% elif s == 'confirmee' %}var(--bleu2){% elif s == 'prete' or s == 'en_cours' %}var(--vert2){% elif s == 'annulee' %}var(--rouge2){% else %}var(--parchemin3){% endif %}">
+    <div class="stat-number" style="font-size:2rem">{{ stats|default_if_none:0 }}
+      {% for sk,sv in stats.items %}{% if sk == s %}{{ sv }}{% endif %}{% endfor %}
+    </div>
+    <div class="stat-label">{{ label }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="page-header">
+  <h1 class="page-title">📋 Gestion des <span>Demandes</span></h1>
+  <a href="{% url 'liste_livres' %}" class="btn btn-outline">← Retour au fonds</a>
+</div>
+
+<!-- Filtre statut -->
+<div style="display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap">
+  <a href="{% url 'admin_commandes' %}" class="btn {% if not statut_filtre %}btn-or{% else %}btn-outline{% endif %} btn-sm">Toutes</a>
+  {% for s,label in statuts %}
+  <a href="?statut={{ s }}" class="btn {% if statut_filtre == s %}btn-or{% else %}btn-outline{% endif %} btn-sm">{{ label }}</a>
+  {% endfor %}
+</div>
+
+{% if commandes %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>N°</th><th>Client</th><th>Ouvrage</th><th>Date</th>
+        <th>Retour prévu</th><th>Statut</th><th>Note</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for c in commandes %}
+    <tr>
+      <td style="font-size:.8rem;font-style:italic;color:var(--encre3)">#{{ c.id }}</td>
+      <td><strong>{{ c.client.username }}</strong><br><span style="font-size:.78rem;color:var(--encre3)">{{ c.client.email }}</span></td>
+      <td>
+        {% if c.livre.image %}<img src="{{ c.livre.image.url }}" style="width:36px;height:48px;object-fit:cover;border-radius:2px;vertical-align:middle;margin-right:8px">{% endif %}
+        <span style="font-family:'Cormorant Garamond',serif;font-style:italic">{{ c.livre.titre }}</span>
+      </td>
+      <td style="font-size:.82rem">{{ c.date_commande|date:"d/m/Y" }}<br><span style="color:var(--encre3)">{{ c.date_commande|date:"H:i" }}</span></td>
+      <td style="font-size:.82rem">{% if c.date_retour_prevu %}{{ c.date_retour_prevu|date:"d/m/Y" }}{% else %}<span style="color:var(--encre3)">—</span>{% endif %}</td>
+      <td><span class="badge badge-{{ c.statut }}">{{ c.get_statut_display_fr }}</span></td>
+      <td style="font-size:.82rem;font-style:italic;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        {% if c.note_client %}{{ c.note_client }}{% else %}<span style="color:var(--encre3)">—</span>{% endif %}
+      </td>
+      <td><a href="{% url 'admin_statut_commande' c.pk %}" class="btn btn-or btn-sm">Gérer</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">📭</div>
+  <h3>Aucune commande</h3>
+  <p>{% if statut_filtre %}Aucune commande avec ce statut.{% else %}Aucune demande enregistrée.{% endif %}</p>
+</div>
+{% endif %}
+{% endblock %}

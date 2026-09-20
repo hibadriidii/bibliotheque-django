@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Commande #{{ commande.id }} — Bibliothèque{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">📋 Commande <span>#{{ commande.id }}</span></h1>
+  <a href="{% url 'admin_commandes' %}" class="btn btn-outline">← Retour</a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 380px;gap:1.5rem;align-items:start">
+
+  <!-- Info commande -->
+  <div>
+    <div style="background:white;border:1px solid var(--parchemin3);border-radius:var(--radius);padding:2rem;box-shadow:var(--ombre);margin-bottom:1.5rem">
+      <h3 style="font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.12em;color:var(--or);margin-bottom:1.5rem">INFORMATIONS DE LA COMMANDE</h3>
+
+      <!-- Livre -->
+      <div style="display:flex;gap:1rem;align-items:center;background:var(--parchemin);padding:1rem;border-radius:var(--radius);margin-bottom:1.5rem;border:1px solid var(--parchemin3)">
+        {% if commande.livre.image %}
+          <img src="{{ commande.livre.image.url }}" style="width:60px;height:80px;object-fit:cover;border-radius:3px;box-shadow:var(--ombre)">
+        {% else %}
+          <div style="width:60px;height:80px;background:var(--encre);display:flex;align-items:center;justify-content:center;border-radius:3px;font-size:1.5rem">📗</div>
+        {% endif %}
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-style:italic;color:var(--encre)">{{ commande.livre.titre }}</div>
+          <div style="font-size:.85rem;color:var(--encre3);font-style:italic">{{ commande.livre.auteur }}</div>
+          <span class="badge badge-{{ commande.livre.statut }}" style="margin-top:5px">{{ commande.livre.get_statut_display_fr }}</span>
+        </div>
+      </div>
+
+      <!-- Client -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        {% for label,val in infos %}
+        <div style="background:var(--parchemin);padding:.8rem 1rem;border-radius:var(--radius);border:1px solid var(--parchemin3)">
+          <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.1em;color:var(--encre3);margin-bottom:3px">{{ label }}</div>
+          <div style="font-size:.9rem;color:var(--encre2)">{{ val }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if commande.note_client %}
+      <div style="margin-top:1.2rem;background:rgba(139,105,20,.06);padding:1rem;border-radius:var(--radius);border-left:3px solid var(--or2)">
+        <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.1em;color:var(--encre3);margin-bottom:5px">MESSAGE DU CLIENT</div>
+        <p style="font-style:italic;color:var(--encre2);font-size:.9rem">{{ commande.note_client }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Formulaire admin -->
+  <div style="background:white;border:1px solid var(--parchemin3);border-top:3px solid var(--or2);border-radius:var(--radius);padding:2rem;box-shadow:var(--ombre)">
+    <h3 style="font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.12em;color:var(--or);margin-bottom:1.5rem">⚜ GÉRER CETTE COMMANDE</h3>
+
+    <div style="margin-bottom:1rem;padding:.8rem;background:var(--parchemin);border-radius:var(--radius);border:1px solid var(--parchemin3)">
+      <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.1em;color:var(--encre3);margin-bottom:4px">STATUT ACTUEL</div>
+      <span class="badge badge-{{ commande.statut }}">{{ commande.get_statut_display_fr }}</span>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div style="display:flex;flex-direction:column;gap:1.2rem">
+        <div class="form-group">
+          <label>{{ form.statut.label }}</label>
+          {{ form.statut }}
+        </div>
+        <div class="form-group">
+          <label>{{ form.date_retour_prevu.label }}</label>
+          {{ form.date_retour_prevu }}
+        </div>
+        <div class="form-group">
+          <label>{{ form.note_admin.label }}</label>
+          {{ form.note_admin }}
+        </div>
+        <button type="submit" class="btn btn-or" style="width:100%;justify-content:center">
+          ⚜ Mettre à jour
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

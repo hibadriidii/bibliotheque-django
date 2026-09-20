@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}{{ titre_page }} — Bibliothèque{% endblock %}
+{% block content %}
+
+<div class="page-entete">
+  <h1 class="page-titre">{{ titre_page }}</h1>
+  <p class="page-sous-titre">Veuillez remplir le formulaire ci-dessous avec soin</p>
+</div>
+
+<div class="carte" style="max-width:680px;margin:0 auto">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-grille">
+      <div class="form-champ plein">
+        <label>{{ form.titre.label }}</label>
+        {{ form.titre }}
+        {% if form.titre.errors %}<ul class="erreurs">{% for e in form.titre.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div class="form-champ">
+        <label>{{ form.auteur.label }}</label>
+        {{ form.auteur }}
+        {% if form.auteur.errors %}<ul class="erreurs">{% for e in form.auteur.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div class="form-champ">
+        <label>{{ form.categorie.label }}</label>
+        {{ form.categorie }}
+      </div>
+      <div class="form-champ">
+        <label>{{ form.annee_publication.label }}</label>
+        {{ form.annee_publication }}
+        {% if form.annee_publication.errors %}<ul class="erreurs">{% for e in form.annee_publication.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div class="form-champ">
+        <label>{{ form.quantite_disponible.label }}</label>
+        {{ form.quantite_disponible }}
+      </div>
+      <div class="form-champ">
+        <label>{{ form.statut.label }}</label>
+        {{ form.statut }}
+      </div>
+      <div class="form-champ">
+        <label>{{ form.date_retour_prevu.label }}</label>
+        {{ form.date_retour_prevu }}
+      </div>
+      <div class="form-champ plein">
+        <label>{{ form.description.label }}</label>
+        {{ form.description }}
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem;display:flex;gap:12px;align-items:center;padding-top:1rem;border-top:1px solid var(--parchemin3)">
+      <button type="submit" class="btn btn-principal">✓ {{ action }} l'ouvrage</button>
+      <a href="{% url 'liste_livres' %}" class="btn btn-contour">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Connexion — Bibliothèque Classique{% endblock %}
+{% block content %}
+<div style="min-height:70vh;display:flex;align-items:center;justify-content:center">
+  <div style="width:100%;max-width:440px">
+
+    <div style="text-align:center;margin-bottom:2.5rem">
+      <div style="font-size:3.5rem;margin-bottom:.8rem">📚</div>
+      <h1 style="font-family:'Cinzel',serif;font-size:1.6rem;letter-spacing:.12em;color:var(--encre)">BIBLIOTHECA</h1>
+      <p style="font-family:'EB Garamond',serif;font-style:italic;color:var(--encre3);margin-top:6px;font-size:1.05rem">
+        « Le savoir est la lumière de l'âme »
+      </p>
+      <div style="color:var(--or2);margin-top:8px;letter-spacing:.4em">✦ ✦ ✦</div>
+    </div>
+
+    <div style="background:white;border:1px solid var(--parchemin3);border-top:3px solid var(--or2);border-radius:var(--radius);padding:2.5rem;box-shadow:var(--ombre2)">
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;text-align:center;margin-bottom:1.8rem;color:var(--encre2)">
+        Entrez dans la bibliothèque
+      </h2>
+
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-error" style="margin-bottom:1rem">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div style="display:flex;flex-direction:column;gap:1.2rem">
+          <div class="form-group">
+            <label>Nom d'utilisateur</label>
+            <input type="text" name="username" class="form-input" placeholder="votre identifiant" required autofocus>
+          </div>
+          <div class="form-group">
+            <label>Mot de passe</label>
+            <input type="password" name="password" class="form-input" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-or" style="width:100%;justify-content:center;margin-top:.5rem;padding:12px">
+            ⚜ Entrer dans la bibliothèque
+          </button>
+        </div>
+      </form>
+
+      <div class="sep" style="margin:1.5rem 0">✦</div>
+
+      <p style="text-align:center;font-family:'EB Garamond',serif;font-style:italic;color:var(--encre3);font-size:.95rem">
+        Nouveau lecteur ?
+        <a href="{% url 'inscription' %}" style="color:var(--or);text-decoration:none">Inscrivez-vous</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

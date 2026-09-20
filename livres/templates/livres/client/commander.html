@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Demander « {{ livre.titre }} »{% endblock %}
+{% block content %}
+<div style="max-width:580px;margin:0 auto">
+  <div style="margin-bottom:1.2rem">
+    <a href="{% url 'detail_client' livre.pk %}" style="font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.1em;color:var(--encre3);text-decoration:none">← RETOUR AU LIVRE</a>
+  </div>
+  <div class="page-header">
+    <h1 class="page-title">📖 Demander un <span>Ouvrage</span></h1>
+  </div>
+
+  <!-- Résumé du livre -->
+  <div style="background:white;border:1px solid var(--parchemin3);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;box-shadow:var(--ombre);display:flex;gap:1.2rem;align-items:center">
+    <div style="width:60px;height:80px;flex-shrink:0;overflow:hidden;border-radius:var(--radius)">
+      {% if livre.image %}<img src="{{ livre.image.url }}" style="width:100%;height:100%;object-fit:cover">
+      {% else %}<div style="width:100%;height:100%;background:var(--parchemin2);display:flex;align-items:center;justify-content:center;font-size:1.8rem">{{ livre.get_emoji }}</div>{% endif %}
+    </div>
+    <div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-style:italic;color:var(--encre)">{{ livre.titre }}</div>
+      <div style="font-style:italic;color:var(--or);margin-top:2px;font-size:.9rem">{{ livre.auteur }}</div>
+      <span class="badge badge-disponible" style="margin-top:6px">Disponible · {{ livre.quantite_disponible }} exemplaire(s)</span>
+    </div>
+  </div>
+
+  <!-- Formulaire -->
+  <div class="form-card">
+    <p style="font-family:'EB Garamond',serif;font-style:italic;color:var(--encre3);margin-bottom:1.5rem;line-height:1.6">
+      Votre demande sera transmise au bibliothécaire. Vous serez notifié dès qu'elle sera traitée.
+    </p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group" style="margin-bottom:1.5rem">
+        <label>{{ form.note_client.label }}</label>
+        {{ form.note_client }}
+      </div>
+      <div style="display:flex;gap:10px">
+        <button type="submit" class="btn btn-or">📖 Confirmer la demande</button>
+        <a href="{% url 'detail_client' livre.pk %}" class="btn btn-outline">Annuler</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Gestion — Bibliothèque{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card"><div class="stat-number">{{ stats.total }}</div><div class="stat-label">Volumes</div></div>
+  <div class="stat-card"><div class="stat-number" style="color:var(--vert)">{{ stats.disponibles }}</div><div class="stat-label">Disponibles</div></div>
+  <div class="stat-card"><div class="stat-number" style="color:var(--rouge)">{{ stats.empruntes }}</div><div class="stat-label">Empruntés</div></div>
+  <div class="stat-card" style="border-top-color:var(--or2)">
+    <a href="{% url 'admin_commandes' %}?statut=en_attente" style="text-decoration:none">
+      <div class="stat-number" style="color:var(--or)">{{ stats.commandes }}</div>
+      <div class="stat-label">Demandes en attente</div>
+    </a>
+  </div>
+</div>
+
+<div class="page-header">
+  <h1 class="page-title">⚜ Fonds <span>Documentaire</span></h1>
+  <a href="{% url 'ajouter_livre' %}" class="btn btn-or">✦ Enregistrer un volume</a>
+</div>
+
+<form method="get" class="search-bar">
+  <input type="text" name="q" value="{{ query }}" placeholder="🔍 Titre, auteur ou identifiant…">
+  <select name="categorie">
+    <option value="">Toutes catégories</option>
+    {% for val,label in categories %}<option value="{{ val }}" {% if categorie_filtre == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <select name="statut">
+    <option value="">Tous statuts</option>
+    <option value="disponible" {% if statut_filtre == 'disponible' %}selected{% endif %}>Disponible</option>
+    <option value="emprunte" {% if statut_filtre == 'emprunte' %}selected{% endif %}>Emprunté</option>
+    <option value="reserve" {% if statut_filtre == 'reserve' %}selected{% endif %}>Réservé</option>
+  </select>
+  <button type="submit" class="btn btn-outline">Filtrer</button>
+  {% if query or categorie_filtre or statut_filtre %}<a href="{% url 'liste_livres' %}" class="btn btn-outline">✕</a>{% endif %}
+</form>
+
+{% if livres %}
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Réf.</th><th>Couverture</th><th>Titre / Auteur</th><th>Catégorie</th><th>Année</th><th>Qté</th><th>Statut</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for livre in livres %}
+    <tr>
+      <td style="color:var(--encre3);font-size:.78rem;font-style:italic">#{{ livre.id }}</td>
+      <td>
+        {% if livre.image %}
+        <img src="{{ livre.image.url }}" style="width:36px;height:50px;object-fit:cover;border-radius:2px;box-shadow:var(--ombre)">
+        {% else %}
+        <div style="width:36px;height:50px;background:var(--parchemin2);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.2rem">{{ livre.get_emoji }}</div>
+        {% endif %}
+      </td>
+      <td>
+        <strong style="font-family:'Cormorant Garamond',serif;font-size:1rem">{{ livre.titre }}</strong>
+        <br><span style="font-size:.8rem;font-style:italic;color:var(--encre3)">{{ livre.auteur }}</span>
+      </td>
+      <td><span style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--encre3)">{{ livre.categorie }}</span></td>
+      <td>{{ livre.annee_publication }}</td>
+      <td style="text-align:center">{{ livre.quantite_disponible }}</td>
+      <td><span class="badge badge-{{ livre.statut }}">{{ livre.get_statut_display_fr }}</span></td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <a href="{% url 'detail_livre' livre.pk %}" class="btn btn-outline btn-sm">Voir</a>
+          <a href="{% url 'modifier_livre' livre.pk %}" class="btn btn-outline btn-sm">Éditer</a>
+          <a href="{% url 'supprimer_livre' livre.pk %}" class="btn btn-rouge btn-sm">Retirer</a>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">📭</div>
+  <h3>Les rayonnages sont vides</h3>
+  <p>{% if query %}Aucun ouvrage ne correspond à « {{ query }} »{% else %}Commencez par enregistrer un premier volume{% endif %}</p>
+  <a href="{% url 'ajouter_livre' %}" class="btn btn-or" style="margin-top:1.5rem">✦ Enregistrer un volume</a>
+</div>
+{% endif %}
+{% endblock %}

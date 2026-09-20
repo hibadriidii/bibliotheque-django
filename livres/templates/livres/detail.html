@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}{{ livre.titre }} — Bibliothèque{% endblock %}
+{% block content %}
+
+<div class="page-entete">
+  <h1 class="page-titre">{{ livre.titre }}</h1>
+  <p class="page-sous-titre">par {{ livre.auteur }}</p>
+</div>
+
+<div style="max-width:680px;margin:0 auto">
+  <div class="carte">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--parchemin3)">
+      <div>
+        <span class="badge badge-{{ livre.statut }}">{{ livre.get_statut_display_fr }}</span>
+      </div>
+      <div style="display:flex;gap:10px">
+        {% if user.is_staff %}
+        <a href="{% url 'modifier_livre' livre.pk %}" class="btn btn-or btn-sm">✎ Modifier</a>
+        <a href="{% url 'supprimer_livre' livre.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+        {% endif %}
+        <a href="{% url 'liste_livres' %}" class="btn btn-contour btn-sm">← Retour</a>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      {% for label, value in rows %}
+      <div style="padding:.8rem 1rem;border:1px solid var(--parchemin3);border-left:3px solid var(--or2)">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--brun2);margin-bottom:3px">{{ label }}</div>
+        <div style="color:var(--encre);font-size:1rem">{{ value }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if livre.description %}
+    <div style="margin-top:1.5rem;padding:1rem;border-top:1px solid var(--parchemin3)">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--brun2);font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem">Notice bibliographique</div>
+      <p style="font-size:1rem;line-height:1.8;color:var(--encre2)">{{ livre.description }}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

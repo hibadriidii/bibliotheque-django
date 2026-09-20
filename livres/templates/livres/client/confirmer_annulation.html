@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Annuler la demande{% endblock %}
+{% block content %}
+<div style="max-width:480px;margin:4rem auto;text-align:center">
+  <div style="background:white;border:1px solid var(--parchemin3);border-top:3px solid var(--rouge2);border-radius:var(--radius);padding:3rem;box-shadow:var(--ombre2)">
+    <div style="font-size:2.5rem;margin-bottom:1.2rem;opacity:.6">⚠️</div>
+    <h2 style="font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.1em;margin-bottom:.8rem">ANNULER CETTE DEMANDE</h2>
+    <p style="font-family:'EB Garamond',serif;font-style:italic;color:var(--encre3);margin-bottom:.8rem">Annuler votre demande pour :</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;color:var(--encre);margin-bottom:.4rem">« {{ commande.livre.titre }} »</p>
+    <p style="font-size:.82rem;color:var(--encre3);font-style:italic;margin-bottom:2rem">Statut actuel : {{ commande.get_statut_display_fr }}</p>
+    <form method="post" style="display:flex;gap:12px;justify-content:center">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-rouge">Confirmer l'annulation</button>
+      <a href="{% url 'mes_commandes' %}" class="btn btn-outline">Garder la demande</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
