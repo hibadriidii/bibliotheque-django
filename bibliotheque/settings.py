@@ -7,7 +7,10 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security
+# ==============================
+# SECURITY
+# ==============================
+
 SECRET_KEY = os.getenv(
     'SECRET_KEY',
     'django-insecure-local-development-only'
@@ -26,7 +29,10 @@ CSRF_TRUSTED_ORIGINS = [
     f'https://{RENDER_EXTERNAL_HOSTNAME}'
 ] if RENDER_EXTERNAL_HOSTNAME else []
 
-# Applications
+# ==============================
+# APPLICATIONS
+# ==============================
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,7 +44,10 @@ INSTALLED_APPS = [
     'chatbot',
 ]
 
-# Middleware
+# ==============================
+# MIDDLEWARE
+# ==============================
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -51,6 +60,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'bibliotheque.urls'
+
+# ==============================
+# TEMPLATES
+# ==============================
 
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -68,7 +81,11 @@ TEMPLATES = [{
 
 WSGI_APPLICATION = 'bibliotheque.wsgi.application'
 
-# Database - SQLite for demonstration
+# ==============================
+# DATABASE
+# SQLite - Demonstration
+# ==============================
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -76,33 +93,59 @@ DATABASES = {
     }
 }
 
+# ==============================
+# AUTHENTICATION
+# ==============================
+
 AUTH_PASSWORD_VALIDATORS = []
+
+LOGIN_URL = '/auth/connexion/'
+LOGIN_REDIRECT_URL = '/livres/'
+LOGOUT_REDIRECT_URL = '/auth/connexion/'
+
+# ==============================
+# LANGUAGE AND TIME
+# ==============================
 
 LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'Africa/Tunis'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# ==============================
+# STATIC FILES
+# ==============================
+
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+
+STATICFILES_DIRS = (
+    [BASE_DIR / 'static']
+    if (BASE_DIR / 'static').is_dir()
+    else []
+)
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = (
     'whitenoise.storage.CompressedManifestStaticFilesStorage'
 )
 
-# Media files
+# ==============================
+# MEDIA FILES
+# ==============================
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# ==============================
+# DEFAULT PRIMARY KEY
+# ==============================
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Authentication
-LOGIN_URL = '/auth/connexion/'
-LOGIN_REDIRECT_URL = '/livres/'
-LOGOUT_REDIRECT_URL = '/auth/connexion/'
+# ==============================
+# GEMINI AI CHATBOT
+# ==============================
 
-# Gemini AI
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 AI_PROVIDER = 'gemini'
